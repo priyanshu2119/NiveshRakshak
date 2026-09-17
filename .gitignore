@@ -1,0 +1,11 @@
+# runtime state — never commit
+.venv/
+data/*.sqlite*
+data/*.log
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# OS/editor
+.DS_Store
+*.swp
