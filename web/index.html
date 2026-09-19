@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NiveshRakshak — check before you pay</title>
+<meta name="description" content="Paste the investment pitch. We check where the money actually goes — against SEBI's own verification systems.">
+<meta name="theme-color" content="#F7F3EC">
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+</head>
+<body>
+<a class="skip" href="#check-form" data-i18n="skip">Skip to checker</a>
+
+<header class="masthead">
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 24 24" width="34" height="34" aria-hidden="true">
+      <path d="M12 1.8 21.2 5.3 V11 C21.2 16.7 17.3 21 12 22.3 C6.7 21 2.8 16.7 2.8 11 V5.3 Z" fill="#22324F"/>
+      <path d="M12 6.2 17.8 15.9 H6.2 Z" fill="#157F3D"/>
+      <path d="M9.9 12.9 11.5 14.6 14.7 10.4" fill="none" stroke="#F7F3EC" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="wordmark">
+      <strong>NiveshRakshak</strong>
+      <span lang="hi">निवेशरक्षक</span>
+    </div>
+  </div>
+  <div class="langswitch" role="group" aria-label="Language">
+    <button type="button" id="lang-en" aria-pressed="true">EN</button>
+    <button type="button" id="lang-hi" aria-pressed="false" lang="hi">हिं</button>
+  </div>
+</header>
+
+<main>
+  <p class="lede">
+    <span data-i18n="lede1">Someone is asking you to invest over chat?</span>
+    <strong data-i18n="lede2">Before you pay, check where the money actually goes.</strong>
+  </p>
+
+  <form id="check-form" novalidate>
+    <div class="card inputcard">
+      <label for="message" class="fieldlabel" data-i18n="msg_label">Paste the message you received</label>
+      <textarea id="message" name="message" rows="6" maxlength="20000"
+        data-i18n-placeholder="msg_ph"
+        placeholder="Forward the WhatsApp/Telegram pitch here — or type the UPI ID / bank account + IFSC they gave you…"></textarea>
+      <p class="hint" id="msg-hint" data-i18n="msg_hint">Screenshots work too. Nothing is stored — the message is checked and forgotten.</p>
+
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="image" name="image" accept="image/png,image/jpeg,image/webp" hidden>
+        <label for="image" class="dz-label">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 16l4.5-6 3.5 4.5 2.5-3L20 16v3H4zM17 5a2 2 0 110 4 2 2 0 010-4z" fill="currentColor"/></svg>
+          <span data-i18n="dz_label">Add a screenshot / QR photo</span>
+        </label>
+        <div class="dz-preview" id="dz-preview" hidden>
+          <img id="dz-thumb" alt="">
+          <button type="button" id="dz-remove" class="chipbtn" data-i18n="dz_remove">Remove</button>
+        </div>
+      </div>
+
+      <details id="adv">
+        <summary data-i18n="adv_summary">Claimed name / registration number (optional)</summary>
+        <div class="advgrid">
+          <label for="claimed-name" data-i18n="adv_name">Who do they claim to be?</label>
+          <input type="text" id="claimed-name" name="claimed_name" autocomplete="off" data-i18n-placeholder="adv_name_ph" placeholder="e.g. Groww Investments">
+          <label for="claimed-regno" data-i18n="adv_regno">Claimed SEBI registration no.</label>
+          <input type="text" id="claimed-regno" name="claimed_regno" autocomplete="off" placeholder="e.g. INZ000031633">
+        </div>
+      </details>
+
+      <button type="submit" id="submit-btn" class="primary">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 1.8 21.2 5.3 V11 C21.2 16.7 17.3 21 12 22.3 C6.7 21 2.8 16.7 2.8 11 V5.3 Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 12.2 11 14.7 15.8 9.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span data-i18n="submit">Check it</span>
+      </button>
+      <p class="hint" data-i18n="submit_hint">Live checks against SEBI Check + the SEBI registry. Usually a few seconds.</p>
+    </div>
+  </form>
+
+  <div id="progress" class="progress" hidden aria-live="polite">
+    <ul>
+      <li data-step="extract"><span class="dot"></span><span data-i18n="step_extract">Reading the message…</span></li>
+      <li data-step="primary"><span class="dot"></span><span data-i18n="step_primary">Checking the payment channel with SEBI Check…</span></li>
+      <li data-step="registry"><span class="dot"></span><span data-i18n="step_registry">Looking up the claimed name in SEBI's registry…</span></li>
+      <li data-step="verdict"><span class="dot"></span><span data-i18n="step_verdict">Building your verdict card…</span></li>
+    </ul>
+  </div>
+
+  <div id="captcha-panel" class="card captchacard" hidden>
+    <h2 data-i18n="cap_title">SEBI is asking for human verification</h2>
+    <p class="hint" data-i18n="cap_why">SEBI Check shows this captcha after repeated checks. We pass it through — we never bypass a regulator's anti-abuse gate.</p>
+    <img id="cap-img" alt="SEBI captcha" width="179" height="58">
+    <div class="caprow">
+      <input type="text" id="cap-text" autocomplete="off" maxlength="12" data-i18n-placeholder="cap_ph" placeholder="Type the characters" aria-label="Captcha answer">
+      <button type="button" id="cap-refresh" class="chipbtn" data-i18n="cap_refresh">New image</button>
+    </div>
+    <button type="button" id="cap-submit" class="primary" data-i18n="cap_submit">Verify &amp; continue</button>
+  </div>
+
+  <section id="result" aria-live="polite"></section>
+
+  <section class="how" aria-labelledby="how-h">
+    <h2 id="how-h" data-i18n="how_title">How it works</h2>
+    <ol>
+      <li>
+        <span class="num">1</span>
+        <div><strong data-i18n="how1_t">Paste the pitch</strong>
+        <p data-i18n="how1_b">A forwarded message, a screenshot, a QR photo, or just the UPI ID / bank details you were given.</p></div>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <div><strong data-i18n="how2_t">We check where the money goes — first</strong>
+        <p data-i18n="how2_b">The payment channel is checked live against SEBI Check. The name/registry lookup runs too — but only as context, never as proof of who sent the message.</p></div>
+      </li>
+      <li>
+        <span class="num">3</span>
+        <div><strong data-i18n="how3_t">Forward the verdict card</strong>
+        <p data-i18n="how3_b">One tap sends the result back into the same chat — so everyone in that group sees it, not just you.</p></div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="explainer" aria-labelledby="valid-h">
+    <h2 id="valid-h" data-i18n="valid_title">The green triangle that protects you</h2>
+    <div class="validgrid">
+      <svg class="triangle-demo" viewBox="0 0 64 64" width="72" height="72" aria-hidden="true">
+        <path d="M32 6 60 54 H4 Z" fill="#157F3D"/>
+        <path d="M25 33 30 38 41 25" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M20 41h24v4a4 4 0 01-4 4H24a4 4 0 01-4-4z" fill="#fff" opacity=".92"/>
+      </svg>
+      <div>
+        <p data-i18n="valid_p1">Since October 2025, every SEBI-registered intermediary collecting your money must use a special UPI handle issued by NPCI — it looks like <code>name.brk@validbank</code> and shows a <strong>white thumbs-up inside a green triangle</strong> on your payment screen.</p>
+        <p data-i18n="valid_p2">A scammer can type any name or registration number into a chat. They cannot make NPCI issue them a real <code>@valid</code> handle. That is why this tool checks the payment channel first — and treats everything else as context.</p>
+        <p class="hint" data-i18n="valid_p3">Old-style handles were required to stop collecting investments by Dec 2025 (existing MF SIPs excepted). A pitch still asking for one is a serious red flag.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p class="disclaimer" data-i18n="footer_disclaimer">Independent public-interest tool. Not affiliated with, endorsed by, or part of SEBI / NPCI. Verdicts reflect live checks against SEBI's public systems at the time shown.</p>
+  <p class="hint" data-i18n="footer_lang">Interface and verdicts: English + हिंदी. Payment-detail extraction (UPI IDs, QR, account numbers) works from messages in any language.</p>
+  <p class="hint" data-i18n="footer_scores">Per-entity complaint history (SEBI SCORES) is not publicly available — this tool neither shows nor guesses it.</p>
+  <p class="hint" data-i18n="footer_privacy">Your messages and screenshots are processed in memory and never stored. A minimal audit record (extracted identifiers only, accounts &amp; phone numbers masked) is kept 90 days, then auto-deleted.</p>
+  <nav class="footlinks" aria-label="Official resources">
+    <a href="https://siportal.sebi.gov.in/intermediary/sebi-check" rel="noopener noreferrer" target="_blank" data-i18n="link_sebicheck">Official SEBI Check</a>
+    <a href="https://www.sebi.gov.in/sebiweb/other/OtherAction.do?doRecognised=yes" rel="noopener noreferrer" target="_blank" data-i18n="link_registry">SEBI registry</a>
+    <a href="https://cybercrime.gov.in/" rel="noopener noreferrer" target="_blank" data-i18n="link_cyber">cybercrime.gov.in</a>
+    <span class="helpline" data-i18n="link_helpline">Cyber fraud helpline: dial 1930</span>
+  </nav>
+  <p class="build" id="build-info"></p>
+</footer>
+
+<script src="vendor/html2canvas.min.js" defer></script>
+<script src="i18n.js" defer></script>
+<script src="app.js" defer></script>
+</body>
+</html>
